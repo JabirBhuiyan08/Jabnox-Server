@@ -21,15 +21,43 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    client.connect(); 
+  
 
     const userCollection = client.db("Jabnox").collection("users");
+    const reviewsCollection = client.db("Jabnox").collection("reviews");
+    const contactCollection = client.db("Jabnox").collection("contact");
 
+    // users
     app.get('/users', async (req, res) =>{
       const result = await userCollection.find().toArray();
       res.send(result);
     })
 
+    // reviews
+    app.get('/reviews', async(req,res)=>{
+      const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.post('/reviews', async(req,res)=>{
+      const review = req.body;
+      const result = await reviewsCollection.insertOne(review);
+      res.send(result);
+    })
+
+    // contact
+    app.post('/contact', async(req,res)=>{
+      const contact =req.body;
+      const result = await contactCollection.insertOne(contact);
+      res.send(result);
+    })
+
+    app.get('/contact', async(req,res)=>{
+      const result = await contactCollection.find().toArray();
+      res.send(result);
+    })
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
